@@ -1,11 +1,21 @@
-# Lernspiel – Teilen mit Rest
+# Teilen mit Rest – Lernspiel
 
-Statische Web-App für GitHub Pages. Dateien: `index.html`, `style.css`, `script.js`.
+Browserbasiertes Lernspiel für vier Levels. Keine Installation oder Build-Schritte erforderlich.
 
-## Bereitstellen
-Entpacke die ZIP-Datei und lade die drei Dateien in das Stammverzeichnis deines GitHub-Repositories. Aktiviere danach GitHub Pages für `main` und `/ (root)`.
+## Start
+- `index.html` direkt öffnen oder die Dateien in ein GitHub-Repository laden und GitHub Pages aktivieren.
+- Die Anwendung läuft lokal im Browser; Sprachausgabe nutzt die Web Speech API des Browsers.
+- Für die Eingabe wird das integrierte Ziffernfeld verwendet.
 
-## Daten / spätere Plattform
-Die Runde erfasst Erstversuche, Aufgabendauer und Gesamtdauer. Daten werden lokal gespeichert und als JSON exportiert. Eine echte Anmeldung und zentrale Lehrpersonenübersicht sind noch nicht enthalten; dafür ist später eine authentifizierte Plattform-API nötig.
+## Dateien
+- `index.html` – Spielfeld und Bedienelemente
+- `style.css` – responsives Layout
+- `script.js` – Aufgabenlogik, Auswertung, Zeitmessung und Ergebnisexport
 
-Die Spieloberfläche enthält bewusst keine schriftlichen Erklärungen. Als sichtbarer Text bleibt nur „Rest“. Sprachhinweise benötigen eine vom Browser unterstützte Sprachausgabe.
+## Ergebnisdaten / spätere Lernumgebung
+Jede beendete Runde wird als JSON in `localStorage` unter `teilenMitRestResults` gespeichert und kann über die Export-Schaltfläche heruntergeladen werden. Das Ergebnisobjekt enthält `schemaVersion`, `gameId`, `sessionId`, `studentId` (derzeit `null`), Level, Start-/Endzeit, Gesamtdauer, Anzahl richtiger/falscher Erstversuche und die einzelnen Aufgabendatensätze mit Dauer und Erstversuchsergebnis.
+
+Für die spätere Anmeldung und Lehrpersonenübersicht kann die umgebende Lernplattform `studentId` beim Start setzen und die exportierten Ergebnisobjekte an einen authentifizierten Server-Endpunkt übermitteln. In dieser eigenständigen Version werden noch keine Benutzerkonten oder Serverdaten angelegt.
+
+## Prüfungen
+Die Dateien sind ohne externe Laufzeitbibliotheken umgesetzt. Die Spielabläufe wurden mit automatisierten Browser-Smoke- und Integrationstests geprüft; Details sind im Übergabebericht im Chat angeführt.

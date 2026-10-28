@@ -1,69 +1,54 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f4f7fb">
-  <meta name="description" content="Interaktives Lernspiel zum Dividieren mit Rest – vier Lernstufen.">
-  <title>Teilen mit Rest – Lernspiel</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Teilen mit Rest</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main id="app" class="app-shell">
-    
-
-    <section id="gameScreen" class="game-layout" aria-live="off">
-      <div class="level-picker game-level-picker" role="group" aria-label="Levels"><button class="level-choice selected" data-level="1" type="button"><strong>1</strong></button><button class="level-choice " data-level="2" type="button"><strong>2</strong></button><button class="level-choice " data-level="3" type="button"><strong>3</strong></button><button class="level-choice " data-level="4" type="button"><strong>4</strong></button></div>
-      <div class="game-main">
-        <div class="progress-row">
-          <div><span class="eyebrow" id="levelLabel">LEVEL 1</span><span id="taskCounter" class="task-counter">Aufgabe 1 von 20</span></div>
-          <div class="progress-track" aria-label="Fortschritt"><div id="progressBar" class="progress-fill"></div></div>
-        </div>
-
-        <section class="panel task-panel">
-          <div id="instruction" class="instruction" aria-hidden="true"></div>
-          <div class="equation-row">
-            <span id="dividendText" class="number">24</span>
-            <span class="operator">:</span>
-            <span id="divisorText" class="number">6</span>
-            <span class="operator">=</span>
-            <input id="answerInput" class="answer-input" type="text" inputmode="none" autocomplete="off" readonly aria-label="Ergebnis">
-            <span id="restLabel" class="rest-label hidden">Rest</span>
-            <input id="restInput" class="answer-input small-answer hidden" type="text" inputmode="none" autocomplete="off" readonly aria-label="Rest">
-          </div>
-          <div id="workArea" class="work-area">
-            <div id="dotsArea" class="dots-area" aria-label="Punktedarstellung"></div>
-            <div id="level3Work" class="multiplication-row hidden">
-              <span id="factorZLabel">z</span><span>·</span><span id="factorYLabel">6</span><span>=</span>
-              <input id="productInput" class="answer-input small-answer" type="text" inputmode="none" readonly aria-label="Malprodukt">
-            </div>
-            <div id="level4Work" class="level4-work hidden">
-              <div class="equation-row compact"><span id="level4Dividend">24</span><span>:</span><span id="level4Divisor">6</span><span>=</span><span id="level4QuotientGhost">?</span><span class="rest-label">Rest</span><span id="level4RestGhost">?</span></div>
-              <div class="multiplication-row"><span>z · <span id="level4Y">6</span> =</span><input id="level4ProductInput" class="answer-input small-answer" type="text" inputmode="none" readonly aria-label="Malprodukt"></div>
-            </div>
-          </div>
-          <div id="modeButtons" class="mode-buttons hidden">
-            <button id="shareButton" class="mode-button" type="button" aria-label="Teilen"><svg viewBox="0 0 100 80" aria-hidden="true"><path d="M50 6 L36 30 H64 Z M22 28 L8 54 H36 Z M78 28 L64 54 H92 Z" fill="currentColor"/><path d="M50 30 V72 M22 54 V72 M78 54 V72" stroke="currentColor" stroke-width="5"/><path d="M32 72 H68 M4 72 H40 M60 72 H96" stroke="currentColor" stroke-width="5"/></svg></button>
-            <button id="measureButton" class="mode-button" type="button" aria-label="Messen"><svg viewBox="0 0 100 80" aria-hidden="true"><ellipse cx="50" cy="40" rx="35" ry="25" fill="none" stroke="currentColor" stroke-width="8"/><ellipse cx="50" cy="40" rx="25" ry="16" fill="none" stroke="currentColor" stroke-width="4"/></svg></button>
-          </div>
-          <div id="feedback" class="feedback" aria-hidden="true"></div>
-          <div id="helpText" class="help-text hidden" aria-hidden="true"></div>
-          <div id="keypad" class="keypad" aria-label="Ziffernfeld">
-            <button type="button" data-digit="1">1</button><button type="button" data-digit="2">2</button><button type="button" data-digit="3">3</button>
-            <button type="button" data-digit="4">4</button><button type="button" data-digit="5">5</button><button type="button" data-digit="6">6</button>
-            <button type="button" data-digit="7">7</button><button type="button" data-digit="8">8</button><button type="button" data-digit="9">9</button>
-            <button type="button" data-action="clear" class="key-clear">⌫</button><button type="button" data-digit="0">0</button><button type="button" data-action="next" class="key-enter">✓</button>
-          </div>
-          
-        </section>
-      </div>
-      
-    </section>
-
-    <section id="resultScreen" class="panel result-panel hidden" aria-live="polite"><div id="celebration" class="celebration hidden"></div><div id="resultScore" class="result-score"></div><div id="resultTime" class="result-time"></div><button id="downloadButton" class="secondary-button hidden" type="button"></button><button id="againButton" class="primary-button hidden" type="button"></button></section>
-  </main>
-
-  
-  <script src="script.js"></script>
+<main id="app">
+  <nav id="levels" aria-label="Levels">
+    <button class="level selected" data-level="1" aria-label="Level 1">1</button>
+    <button class="level" data-level="2" aria-label="Level 2">2</button>
+    <button class="level" data-level="3" aria-label="Level 3">3</button>
+    <button class="level" data-level="4" aria-label="Level 4">4</button>
+    <button id="leave" aria-label="Verlassen"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 5h23v38H8z M18 24h23m-8-8 8 8-8 8" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/></svg></button>
+  </nav>
+  <section id="game">
+    <div id="equation" class="equation">
+      <span id="dividend">18</span><span>:</span><span id="divisor">5</span><span>=</span>
+      <input id="quotient" class="answer" readonly aria-label="Ergebnis" tabindex="-1">
+      <span id="restLabel" class="rest-label hidden">Rest</span><input id="remainder" class="answer small hidden" readonly aria-label="Rest" tabindex="-1">
+    </div>
+    <div id="productRow" class="product-row hidden">
+      <span id="zLabel">z</span><span>·</span><span id="yLabel">5</span><span>=</span><input id="product" class="answer small" readonly aria-label="Produkt" tabindex="-1">
+    </div>
+    <div id="dots" aria-label="Punktedarstellung"></div>
+    <div id="modeButtons" class="mode-buttons hidden">
+      <button id="share" class="mode" aria-label="Teilen">
+        <svg viewBox="0 0 100 80" aria-hidden="true"><g fill="currentColor"><path d="M50 3 36 29h28zM18 29 4 55h28zM82 29 68 55h28z"/></g><g stroke="currentColor" stroke-width="5"><path d="M50 29v40M18 55v14M82 55v14M33 70h34M1 70h34M65 70h34"/></g></svg>
+      </button>
+      <button id="measure" class="mode" aria-label="Messen">
+        <svg viewBox="0 0 100 80" aria-hidden="true"><ellipse cx="50" cy="40" rx="36" ry="25" fill="none" stroke="currentColor" stroke-width="8"/><ellipse cx="50" cy="40" rx="25" ry="16" fill="none" stroke="currentColor" stroke-width="4"/></svg>
+      </button>
+    </div>
+    <div id="palette" class="palette hidden" aria-label="Farbauswahl"></div>
+    <div id="keypad" class="keypad" aria-label="Ziffernfeld">
+      <button data-digit="1">1</button><button data-digit="2">2</button><button data-digit="3">3</button>
+      <button data-digit="4">4</button><button data-digit="5">5</button><button data-digit="6">6</button>
+      <button data-digit="7">7</button><button data-digit="8">8</button><button data-digit="9">9</button>
+      <button data-action="clear" aria-label="Löschen">⌫</button><button data-digit="0">0</button><button data-action="next" aria-label="Prüfen">✓</button>
+    </div>
+  </section>
+  <section id="result" class="hidden">
+    <div id="celebration" class="celebration hidden" aria-hidden="true"></div>
+    <div id="score"></div><div id="time"></div>
+    <button id="export" aria-label="Ergebnis exportieren">⇩</button>
+    <button id="again" aria-label="Weiter">↻</button>
+  </section>
+</main>
+<script src="script.js"></script>
 </body>
 </html>
