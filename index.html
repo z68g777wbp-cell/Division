@@ -15,27 +15,13 @@
       <h1>Teilen mit Rest</h1>
       <p class="subtitle">Entdecken · ausprobieren · verstehen</p>
     </div>
-    <button id="leaveButton" class="icon-button" type="button" aria-label="Spiel verlassen" title="Spiel verlassen">🚪</button>
+    <button id="leaveButton" class="icon-button" type="button" aria-label="🚪" title="🚪">🚪</button>
   </header>
 
   <main id="app" class="app-shell">
-    <section id="startScreen" class="panel start-panel">
-      <div class="eyebrow">MATHEMATIK · DIVIDIEREN</div>
-      <h2>Bereit zum Teilen?</h2>
-      <p>Bearbeite 20 Aufgaben. Du kannst jederzeit über die offene Tür aufhören.</p>
-      <label class="student-label" for="studentId">Kind-Code <span>(optional)</span></label>
-      <input id="studentId" class="text-input" maxlength="40" autocomplete="off" placeholder="z. B. K07">
-      <div class="level-picker" role="group" aria-label="Lernstufe auswählen">
-        <button class="level-choice selected" data-level="1" type="button"><strong>1</strong><span>Teilen entdecken</span><small>mit Material und Animation</small></button>
-        <button class="level-choice" data-level="2" type="button"><strong>2</strong><span>Größere Gruppen</span><small>Divisor 5 bis 9</small></button>
-        <button class="level-choice" data-level="3" type="button"><strong>3</strong><span>Malaufgabe finden</span><small>Umkehraufgabe nutzen</small></button>
-        <button class="level-choice" data-level="4" type="button"><strong>4</strong><span>Schritt für Schritt</span><small>Divisor und Rest bestimmen</small></button>
-      </div>
-      <button id="startButton" class="primary-button" type="button">Spiel starten <span aria-hidden="true">→</span></button>
-      <p class="privacy-note">Die Ergebnisse werden in diesem Browser gespeichert. Ein Kind-Code hilft, Spielrunden später zuzuordnen.</p>
-    </section>
+    
 
-    <section id="gameScreen" class="game-layout hidden" aria-live="off">
+    <section id="gameScreen" class="game-layout" aria-live="off">\n      <div class="level-picker game-level-picker" role="group" aria-label="Levels"><button class="level-choice selected" data-level="1" type="button"><strong>1</strong></button><button class="level-choice " data-level="2" type="button"><strong>2</strong></button><button class="level-choice " data-level="3" type="button"><strong>3</strong></button><button class="level-choice " data-level="4" type="button"><strong>4</strong></button></div>
       <div class="game-main">
         <div class="progress-row">
           <div><span class="eyebrow" id="levelLabel">LEVEL 1</span><span id="taskCounter" class="task-counter">Aufgabe 1 von 20</span></div>
@@ -65,10 +51,10 @@
             </div>
           </div>
           <div id="modeButtons" class="mode-buttons hidden">
-            <button id="shareButton" class="secondary-button" type="button"><span class="cone-icon" aria-hidden="true">▲ ▲ ▲</span> Teilen</button>
-            <button id="measureButton" class="secondary-button" type="button"><span class="ring-icon" aria-hidden="true">◯</span> Messen</button>
+            <button id="shareButton" class="secondary-button" type="button"><span class="cone-icon" aria-hidden="true">▲ ▲ ▲</span></button>
+            <button id="measureButton" class="secondary-button" type="button"><span class="ring-icon" aria-hidden="true">◯</span></button>
           </div>
-          <div id="feedback" class="feedback" role="status" aria-live="polite" aria-hidden="true"></div>
+          <div id="feedback" class="feedback" aria-hidden="true"></div>
           <div id="helpText" class="help-text hidden" aria-hidden="true"></div>
           <div id="keypad" class="keypad" aria-label="Ziffernfeld">
             <button type="button" data-digit="1">1</button><button type="button" data-digit="2">2</button><button type="button" data-digit="3">3</button>
@@ -76,35 +62,16 @@
             <button type="button" data-digit="7">7</button><button type="button" data-digit="8">8</button><button type="button" data-digit="9">9</button>
             <button type="button" data-action="clear" class="key-clear">⌫</button><button type="button" data-digit="0">0</button><button type="button" data-action="next" class="key-enter">✓</button>
           </div>
-          <div class="task-actions"><button id="repeatButton" class="text-button hidden" type="button">Aufgabe später wiederholen</button></div>
+          
         </section>
       </div>
-      <aside class="side-panel">
-        <section class="panel mini-stat"><span class="stat-label">Aufgaben erledigt</span><strong id="doneCount">0</strong><span class="stat-sub">von 20 bewertet</span></section>
-        <section class="panel mini-stat"><span class="stat-label">Zeit</span><strong id="timer">0:00</strong><span class="stat-sub">läuft im Hintergrund weiter</span></section>
-        <section class="panel mini-stat"><span class="stat-label">Richtig</span><strong id="correctCount">0</strong><span class="stat-sub">beim ersten Versuch</span></section>
-        
-      </aside>
+      
     </section>
 
-    <section id="resultScreen" class="panel result-panel hidden" aria-live="polite">
-      <div id="celebration" class="celebration hidden" aria-hidden="true"></div>
-      <div class="eyebrow">DEIN ERGEBNIS</div>
-      <div id="resultScore" class="result-score">18 von 20 Aufgaben richtig.</div>
-      <div id="resultTime" class="result-time">Zeit: 2:34</div>
-      <p id="resultMessage" class="result-message"></p>
-      <div class="result-details">
-        <div><span>Richtig</span><strong id="resultCorrect">0</strong></div>
-        <div><span>Falsch</span><strong id="resultWrong">0</strong></div>
-        <div><span>Bewertet</span><strong id="resultTotal">0</strong></div>
-      </div>
-      <button id="downloadButton" class="secondary-button download-button" type="button">Ergebnisdatei herunterladen (JSON)</button>
-      <button id="againButton" class="primary-button" type="button">Noch eine Runde spielen <span aria-hidden="true">→</span></button>
-      <p class="privacy-note">Die JSON-Datei enthält Aufgabenzeiten und Ergebnisse für eine spätere Auswertung durch die Lehrperson.</p>
-    </section>
+    <section id="resultScreen" class="panel result-panel hidden" aria-live="polite"><div id="celebration" class="celebration hidden"></div><div id="resultScore" class="result-score"></div><div id="resultTime" class="result-time"></div><button id="downloadButton" class="secondary-button hidden" type="button"></button><button id="againButton" class="primary-button hidden" type="button"></button></section>
   </main>
 
-  <footer class="footer">Teilen mit Rest <span>·</span> Lernspiel-Prototyp für die Volksschule</footer>
+  
   <script src="script.js"></script>
 </body>
 </html>

@@ -100,7 +100,7 @@
   function startGame() {
     clearTimers();
     state.level = Number(document.querySelector(".level-choice.selected")?.dataset.level || 1);
-    state.studentId = els.studentId.value.trim().slice(0, 40);
+    state.studentId = els.studentId ? els.studentId.value.trim().slice(0, 40) : "";
     state.startedAt = Date.now();
     state.sessionId = cryptoId();
     state.assessed = 0; state.correct = 0; state.wrong = 0; state.records = [];
