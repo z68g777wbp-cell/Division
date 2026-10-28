@@ -99,3 +99,26 @@ button{font:inherit;touch-action:manipulation;cursor:pointer}
 /* V8: Punktfeld mit stabilen, gleichmäßigen Grid-Abständen ohne überlaufende Margins. */
 #dots{column-gap:clamp(4px,.8vw,10px)!important;row-gap:clamp(4px,.8vw,10px)!important}
 #dots>.dot:nth-child(10n+6), #dots>.dot:nth-child(51){margin-left:0!important;margin-top:0!important}
+
+
+/* Korrektur: stabiles, gleichmäßiges Raster ohne überlappende Sonderabstände. */
+#dots {
+  grid-template-columns: repeat(10, minmax(0, clamp(15px, 3.4vw, 38px))) !important;
+  grid-auto-rows: clamp(15px, 3.4vw, 38px);
+  column-gap: clamp(4px, .8vw, 10px) !important;
+  row-gap: clamp(4px, .8vw, 10px) !important;
+  align-content: start;
+  justify-content: center;
+}
+#dots > .dot,
+#dots > .dot:nth-child(10n+6),
+#dots > .dot:nth-child(51) {
+  margin: 0 !important;
+  align-self: start;
+  justify-self: start;
+}
+.dot { width: clamp(15px, 3.4vw, 38px); height: clamp(15px, 3.4vw, 38px); }
+
+/* Level 4 verwendet nur Produkt, Ergebnis z und Rest. */
+#game.level-4 #factor { display: none !important; }
+#game.level-4 .product-row { gap: 0 !important; }

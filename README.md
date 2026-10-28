@@ -32,3 +32,11 @@ Die Dateien wurden mit `node --check` und automatisierten Chromium-/Playwright-B
 - 20 Aufgaben pro Runde ohne doppelte Dividend/Divisor-Kombination
 
 Die Sprachausgabe hängt von Browser und Betriebssystem ab. Die Daten bleiben lokal, bis sie manuell exportiert werden.
+
+
+## Version 9 – gezielte Korrekturen
+- Das Punktefeld verwendet nun ein stabiles Raster ohne überlappende Sonderabstände.
+- Ein fehlendes `zLabel`-Element wurde ergänzt, damit der Aufgabenwechsel ohne JavaScript-Fehler funktioniert.
+- In Level 3 bleibt das Eingabefeld für z zunächst gesperrt und wird nach richtiger Produkteingabe freigeschaltet; erst nach korrekter z-Eingabe folgt die Restfrage.
+- In Level 4 ist das zusätzliche z-Eingabefeld ausgeblendet; die Folge bleibt Produkt → z → Rest.
+- Details zu den automatisierten Prüfungen stehen in `TESTPROTOKOLL.md`.
