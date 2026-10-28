@@ -1,29 +1,34 @@
 # Teilen mit Rest – Lernspiel
 
-Browserbasiertes Lernspiel für vier Levels. Keine Installation oder Build-Schritte erforderlich.
+Browserbasiertes Lernspiel für vier Levels. Keine Installation und keine Build-Schritte erforderlich.
 
-## Start
-- `index.html` direkt öffnen oder die Dateien in ein GitHub-Repository laden und GitHub Pages aktivieren.
-- Die Anwendung läuft lokal im Browser; Sprachausgabe nutzt die Web Speech API des Browsers.
-- Für die Eingabe wird das integrierte Ziffernfeld verwendet.
+## Start und GitHub Pages
+1. Die vier Projektdateien `index.html`, `style.css`, `script.js` und `README.md` in das Stammverzeichnis eines GitHub-Repositories hochladen.
+2. Unter **Settings → Pages** die Veröffentlichung aus dem gewünschten Branch und Verzeichnis aktivieren.
+3. Die veröffentlichte `index.html` im Browser öffnen. Die Web Speech API des Browsers wird für die Sprachanweisungen verwendet.
 
-## Dateien
-- `index.html` – Spielfeld und Bedienelemente
-- `style.css` – responsives Layout
-- `script.js` – Aufgabenlogik, Auswertung, Zeitmessung und Ergebnisexport
+## Bedienung
+- Level 1: Punkte selbst auf die Kegel ziehen oder mit Farbpinsel Gruppen markieren.
+- Level 2: Punkte werden beim Teilen bzw. Messen sichtbar und schrittweise gruppiert.
+- Level 3: Zuerst das nächstkleinere Vielfache bestimmen; danach werden Ergebnis und Rest eingegeben.
+- Level 4: Produkt, Ergebnis und Rest werden in drei getrennten Eingabefeldern erfasst.
+- Eingaben erfolgen über das eingebaute Ziffernfeld.
 
-## Ergebnisdaten / spätere Lernumgebung
-Jede beendete Runde wird als JSON in `localStorage` unter `teilenMitRestResults` gespeichert und kann über die Export-Schaltfläche heruntergeladen werden. Das Ergebnisobjekt enthält `schemaVersion`, `gameId`, `sessionId`, `studentId` (derzeit `null`), Level, Start-/Endzeit, Gesamtdauer, Anzahl richtiger/falscher Erstversuche und die einzelnen Aufgabendatensätze mit Dauer und Erstversuchsergebnis.
+## Ergebnisdaten und Datenschutz
+Eine beendete Runde wird als JSON in `localStorage` unter `teilenMitRestResults` gespeichert und kann über die Export-Schaltfläche heruntergeladen werden. Enthalten sind unter anderem Sitzungskennung, Level, Start-/Endzeit, Gesamtdauer, Erstversuchsergebnisse sowie Dauer und Ergebnis je Aufgabe. Die eigenständige Spielversion erfasst keine Namen und übermittelt keine Daten an einen Server.
 
-Für die spätere Anmeldung und Lehrpersonenübersicht kann die umgebende Lernplattform `studentId` beim Start setzen und die exportierten Ergebnisobjekte an einen authentifizierten Server-Endpunkt übermitteln. In dieser eigenständigen Version werden noch keine Benutzerkonten oder Serverdaten angelegt.
+`studentId` ist derzeit `null`. Benutzerkonten und eine Lehrpersonenübersicht sind nicht Bestandteil dieses eigenständigen Spiels; die Ergebnisstruktur ist für eine spätere Anbindung an eine authentifizierte Lernplattform vorgesehen.
 
-## Prüfungen
-Die Dateien sind ohne externe Laufzeitbibliotheken umgesetzt. Die Spielabläufe wurden mit automatisierten Browser-Smoke- und Integrationstests geprüft; Details sind im Übergabebericht im Chat angeführt.
+## Testprotokoll
+Die Dateien wurden mit `node --check` und automatisierten Chromium-/Playwright-Browsertests geprüft. Geprüft wurden:
+- Start, Levelwechsel, Auswahl von Teilen/Messen und Fehlerfreiheit der Browserkonsole
+- Level 1: unvollständige Verteilung wird zurückgewiesen; korrekte Kegelverteilung akzeptiert; fehlerhafte Farbgruppe wird weiß zurückgesetzt; korrekte Farbgruppen und Rest werden akzeptiert
+- Level 2: Kegel werden angelegt und Punkte schrittweise verteilt; Messen färbt Gruppen schrittweise; keine gesprochene Aufforderung „Teile die Punkte gleichmäßig auf“
+- Level 3: z-Feld anfangs gesperrt, nach richtigem Produkt freigeschaltet; Sprachausgabe verwendet die konkreten Zahlen
+- Level 4: sichtbare Multiplikationsoperatoren/-labels ausgeblendet; Produktfeld unter der Dividend-Zahl ausgerichtet; drei Eingabefelder werden nacheinander freigeschaltet
+- vollständiger 20-Aufgaben-Durchgang mit korrekter Auswertung und Zeitdaten
+- falscher Erstversuch, verzögerte Wiederholung ohne doppelte Zählung und korrekte Erstversuchsstatistik
+- responsives Layout bei 390×844, 1024×768 und 1366×768 ohne äußeres Seiten-Scrollen
+- 20 Aufgaben pro Runde ohne doppelte Dividend/Divisor-Kombination
 
-
-## Aktualisierung (28.10.2026)
-- Punktabstände mit Fünfergliederung angepasst.
-- Punkte unter Kegeln werden in einer senkrechten Spalte gesammelt.
-- Manuelle Verteilung und Farbmessung werden beim Start der Ergebniseingabe kontrolliert.
-- Level 2 zeigt die automatische Gruppenfärbung schrittweise.
-- Level-spezifische Darstellung der Aufgabenfelder ergänzt.
+Die Sprachausgabe hängt von Browser und Betriebssystem ab. Die Daten bleiben lokal, bis sie manuell exportiert werden.

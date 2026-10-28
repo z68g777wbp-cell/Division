@@ -9,7 +9,7 @@ const ui = {
   leave:$("leave"), score:$("score"), time:$("time"), celebration:$("celebration"), export:$("export"), again:$("again")
 };
 const COLORS=["#ed7437","#a02b96","#fff000","#42cf61","#67c9ed","#e92727","#0ca95b","#8b65cf","#f3a5bd"];
-const state={level:1,task:null,queue:[],index:0,assessed:0,correct:0,wrong:0,records:[],retryQueue:[],sessionId:"",startedAt:0,taskStartedAt:0,mode:null,stage:"chooseMode",target:"quotient",firstTry:true,taskHadError:false,helpUsed:false,finished:false,paintColor:null,inputTimer:null,hintTimer:null,timerHandle:null,lastResult:null,roundSeen:new Set()};
+const state={level:1,task:null,queue:[],index:0,assessed:0,correct:0,wrong:0,records:[],retryQueue:[],sessionId:"",startedAt:0,taskStartedAt:0,mode:null,stage:"chooseMode",target:"quotient",firstTry:true,taskHadError:false,helpUsed:false,finished:false,paintColor:null,inputTimer:null,clearTimer:null,hintTimer:null,timerHandle:null,lastResult:null,roundSeen:new Set()};
 function uid(){try{return crypto.randomUUID()}catch{return `id-${Date.now()}-${Math.random().toString(36).slice(2)}`}}
 function speak(text){if(!("speechSynthesis"in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang="de-AT";u.rate=.92;speechSynthesis.speak(u)}catch{}}
 function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
@@ -32,7 +32,7 @@ function makeTask(level){
  return {...picked,id:uid(),level,mode:null,assessed:false,retry:false,firstWrong:false,helpUsed:false,attempts:0,startedAt:Date.now(),endedAt:null};
 }
 function buildQueue(){state.roundSeen=new Set();state.queue=[];while(state.queue.length<20)state.queue.push(makeTask(state.level));state.index=0;state.retryQueue=[]}
-function stopTimers(){if(state.inputTimer)clearTimeout(state.inputTimer);if(state.hintTimer)clearTimeout(state.hintTimer);state.inputTimer=state.hintTimer=null}
+function stopTimers(){if(state.inputTimer)clearTimeout(state.inputTimer);if(state.clearTimer)clearTimeout(state.clearTimer);if(state.hintTimer)clearTimeout(state.hintTimer);state.inputTimer=state.clearTimer=state.hintTimer=null}
 function startGame(){
  stopTimers();if(state.timerHandle)clearInterval(state.timerHandle);
  state.level=Number(document.querySelector(".level.selected")?.dataset.level||1);ui.game.classList.remove("level-1","level-2","level-3","level-4");ui.game.classList.add(`level-${state.level}`);
@@ -49,8 +49,8 @@ function showTask(task){
  ui.quotient.value="";ui.remainder.value="";ui.product.value="";
  [ui.quotient,ui.remainder,ui.product].forEach(i=>i.classList.remove("correct","incorrect","blink"));
  ui.remainder.classList.add("hidden");ui.restLabel.classList.add("hidden");
- if(state.level===4){ui.quotient.disabled=true;ui.remainder.disabled=true;ui.remainder.classList.remove("hidden");ui.restLabel.classList.remove("hidden");ui.quotient.classList.add("disabled-look");ui.remainder.classList.add("disabled-look");}
- else {ui.quotient.disabled=false;ui.remainder.disabled=false;ui.quotient.classList.remove("disabled-look");ui.remainder.classList.remove("disabled-look");}
+ if(state.level===4){ui.quotient.disabled=true;ui.remainder.disabled=true;ui.remainder.classList.remove("hidden");ui.restLabel.classList.remove("hidden");ui.quotient.classList.add("disabled-look");ui.remainder.classList.add("disabled-look");ui.product.disabled=false;ui.product.classList.remove("disabled-look");}
+ else {ui.quotient.disabled=state.level===3;ui.remainder.disabled=false;ui.quotient.classList.toggle("disabled-look",state.level===3);ui.remainder.classList.remove("disabled-look");ui.product.disabled=false;ui.product.classList.remove("disabled-look");}
  ui.productRow.classList.toggle("hidden",state.level!==3&&state.level!==4);
  ui.zLabel.textContent="z";ui.yLabel.textContent=task.divisor;
  ui.modeButtons.classList.toggle("hidden",state.level>2);
@@ -87,13 +87,15 @@ function chooseMode(mode){
  if(state.level===1){
   renderDots(state.task,mode==="share");
   if(mode==="share")speak("Teile die Punkte gleichmäßig auf.");
-  else {setupPalette();ui.dots.classList.add("measure-mode");speak(`Tippe immer ${state.task.divisor} Punkte an!`)}
+  else {setupPalette();ui.dots.classList.add("measure-mode");ui.dots.querySelectorAll(":scope > .dot").forEach(dot=>{dot.style.backgroundColor="#fff";delete dot.dataset.painted});speak(`Tippe immer ${state.task.divisor} Punkte an!`)}
  }else{
-  animateGroups(mode);
   if(state.level===2){
-   speak(mode==="measure"?`Tippe immer ${state.task.divisor} Punkte an!`:"");
+   if(mode==="measure")speak(`Tippe immer ${state.task.divisor} Punkte an!`);
    animateLevelTwo(mode);
-  } else speak(mode==="share"?"Teile die Punkte gleichmäßig auf.":`Tippe immer ${state.task.divisor} Punkte an!`);
+  } else {
+   animateGroups(mode);
+   speak(mode==="share"?"Teile die Punkte gleichmäßig auf.":`Tippe immer ${state.task.divisor} Punkte an!`);
+  }
  }
  state.target="quotient";
 }
@@ -102,12 +104,26 @@ function animateGroups(mode){
  dots.forEach((dot,i)=>{if(i<t.quotient*t.divisor){dot.style.backgroundColor=COLORS[Math.floor(i/t.divisor)%COLORS.length];dot.classList.add("grouped")}else{dot.style.backgroundColor="#fff";dot.classList.add("leftover")}});
 }
 function animateLevelTwo(mode){
- const t=state.task,dots=[...ui.dots.querySelectorAll(".dot")];
- dots.forEach(dot=>{dot.style.backgroundColor="#fff";dot.classList.remove("grouped","leftover")});
- dots.forEach((dot,i)=>{setTimeout(()=>{if(state.task!==t)return;
-  if(i<t.quotient*t.divisor){dot.style.backgroundColor=COLORS[Math.floor(i/t.divisor)%COLORS.length];dot.classList.add("grouped")}
-  else {dot.style.backgroundColor="#fff";dot.classList.add("leftover")}
- },i*95)});
+ const t=state.task;
+ if(mode==="share"){
+  renderDots(t,true);
+  const dots=[...ui.dots.querySelectorAll(":scope > .dot")];
+  const cones=[...ui.dots.querySelectorAll(".cone-drop")];
+  dots.forEach(dot=>{dot.style.backgroundColor="#176483";dot.classList.remove("grouped","leftover")});
+  let step=0;
+  for(let round=0;round<t.quotient;round++)for(let c=0;c<t.divisor;c++){
+   const dot=dots[step++]; if(!dot)continue;
+   setTimeout(()=>{if(state.task===t&&cones[c])cones[c].appendChild(dot)},step*75);
+  }
+  dots.slice(t.quotient*t.divisor).forEach((dot,i)=>dot.classList.add("leftover"));
+ } else {
+  const dots=[...ui.dots.querySelectorAll(".dot")];
+  dots.forEach(dot=>{dot.style.backgroundColor="#fff";dot.classList.remove("grouped","leftover")});
+  dots.forEach((dot,i)=>setTimeout(()=>{if(state.task!==t)return;
+   if(i<t.quotient*t.divisor){dot.style.backgroundColor=COLORS[Math.floor(i/t.divisor)%COLORS.length];dot.classList.add("grouped")}
+   else {dot.style.backgroundColor="#fff";dot.classList.add("leftover")}
+  },i*140));
+ }
 }
 function validateManualWork(){
  const t=state.task;
@@ -143,7 +159,7 @@ function distributionComplete(){
 }
 function enterDigit(digit){
  if(state.finished||state.stage==="chooseMode")return;
- if(!validateManualWork())return;
+ if(state.clearTimer){clearTimeout(state.clearTimer);state.clearTimer=null;}
  const input=inputForTarget();if(!input||input.disabled)return;
  const needed=requiredLength(state.target);
  if(input.value.length>=needed)input.value="";
@@ -157,7 +173,8 @@ function wrong(input,message){
  const t=state.task;t.attempts++;state.taskHadError=true;t.firstWrong=true;t.helpUsed=true;state.firstTry=false;
  if(!t.retry&&!t.assessmentRecorded)recordAssessment(t,false);
  if(state.level===4&&state.target==="product")speak(message);
- setTimeout(()=>{if(input.isConnected&&state.task&&!state.finished){input.value="";input.classList.remove("incorrect")}},250);
+ if(state.clearTimer)clearTimeout(state.clearTimer);
+ state.clearTimer=setTimeout(()=>{if(input.isConnected&&state.task&&!state.finished){input.value="";input.classList.remove("incorrect")}state.clearTimer=null},250);
 }
 function recordAssessment(t,isCorrect){
  if(t.assessmentRecorded)return;
@@ -172,6 +189,7 @@ function right(input){input.classList.remove("incorrect","blink");input.classLis
 function checkInput(input){
  if(state.finished||!state.task||!input.value)return;
  const t=state.task,v=Number(input.value),target=state.target;
+ if(target==="quotient"&&state.level===1&&!validateManualWork()){input.value="";return;}
  let expected=target==="product"?t.product:target==="remainder"?t.remainder:t.quotient;
  if(v!==expected){
   let msg="Versuche es noch einmal.";
@@ -184,7 +202,7 @@ function checkInput(input){
   stopTimers();
   if(state.level===4){ui.quotient.disabled=false;ui.quotient.classList.remove("disabled-look");}
   if(state.level===3){state.stage="findQuotient";state.target="quotient";ui.quotient.disabled=false;ui.quotient.classList.remove("disabled-look","blink");speak(`Wie viel fehlt von ${t.product} bis ${t.dividend}?`)}
-  else {state.stage="findQuotient";state.target="quotient";speak(`Wie viel mal ${t.divisor} ist ${t.product}?`)}
+  else {state.stage="findQuotient";state.target="quotient";speak(state.level===4?`Wie oft passt die ${t.divisor} in die ${t.dividend}?`:`Wie viel mal ${t.divisor} ist ${t.product}?`)}
   return;
  }
  if(target==="quotient"){
@@ -273,6 +291,6 @@ document.addEventListener("pointerup",e=>{
  }
  drag=null;dragStart=null;dragOrigin=null;
 });
-window.DivisionLearningGame={start:startGame,finish:finishGame,getSession:()=>({level:state.level,assessed:state.assessed,correct:state.correct,wrong:state.wrong,finished:state.finished,stage:state.stage}),exportCurrentResult:()=>state.lastResult};
+window.DivisionLearningGame={start:startGame,finish:finishGame,getSession:()=>({level:state.level,assessed:state.assessed,correct:state.correct,wrong:state.wrong,finished:state.finished,stage:state.stage}),getCurrentTask:()=>state.task?({dividend:state.task.dividend,divisor:state.task.divisor,quotient:state.task.quotient,remainder:state.task.remainder,product:state.task.product}):null,getQueuedTasks:()=>state.queue.map(t=>({dividend:t.dividend,divisor:t.divisor})),exportCurrentResult:()=>state.lastResult};
 startGame();
 })();

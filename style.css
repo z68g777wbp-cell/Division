@@ -79,7 +79,7 @@ button{font:inherit;touch-action:manipulation;cursor:pointer}
 /* Gleichmäßige Punktabstände; nach fünf Spalten und fünf Zeilen vierfacher Abstand. */
 #dots{column-gap:clamp(3px,.7vw,9px);row-gap:clamp(3px,.7vw,9px)}
 #dots>.dot:nth-child(10n+6){margin-left:calc(clamp(3px,.7vw,9px) * 3)}
-#dots>.dot:nth-child(n+51){margin-top:calc(clamp(3px,.7vw,9px) * 3)}
+#dots>.dot:nth-child(51){margin-top:calc(clamp(3px,.7vw,9px) * 3)}
 /* Punkte unter den Kegeln werden in genau einer senkrechten Spalte abgelegt. */
 .cone-drop{display:flex;flex-direction:column;flex-wrap:nowrap;align-content:flex-start;align-items:center;justify-content:flex-start;gap:clamp(3px,.7vw,9px);overflow:visible}
 .cone-drop .dot:nth-child(5n+6){margin-top:calc(clamp(3px,.7vw,9px) * 3)}
@@ -88,3 +88,10 @@ button{font:inherit;touch-action:manipulation;cursor:pointer}
 #game.level-4 .product-row .operator,#game.level-4 #zLabel,#game.level-4 #yLabel{display:none}
 #game.level-4 .product-row{justify-content:center}
 #game.level-4 .product-row input{margin-left:0}
+
+/* Level 4: kein sichtbarer Mal-Aufgabentext; das Produktfeld steht unter der Dividend-Zahl. */
+#game.level-4 .product-row{height:38px;min-height:38px;justify-content:center;transform:translateX(calc(-1 * clamp(125px,15.2vw,160px)));gap:0}
+#game.level-4 .product-row .product-operator{display:none}
+#game.level-4 .product-row input{margin:0}
+#game.level-4 .equation{gap:clamp(5px,1.2vw,14px)}
+#game.level-4 #remainder:disabled{background:#e7ecef}
