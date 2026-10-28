@@ -43,7 +43,7 @@
         </div>
 
         <section class="panel task-panel">
-          <div id="instruction" class="instruction">Schau dir die Punkte an.</div>
+          <div id="instruction" class="instruction" aria-hidden="true"></div>
           <div class="equation-row">
             <span id="dividendText" class="number">24</span>
             <span class="operator">:</span>
@@ -68,22 +68,22 @@
             <button id="shareButton" class="secondary-button" type="button"><span class="cone-icon" aria-hidden="true">▲ ▲ ▲</span> Teilen</button>
             <button id="measureButton" class="secondary-button" type="button"><span class="ring-icon" aria-hidden="true">◯</span> Messen</button>
           </div>
-          <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
-          <div id="helpText" class="help-text hidden"></div>
+          <div id="feedback" class="feedback" role="status" aria-live="polite" aria-hidden="true"></div>
+          <div id="helpText" class="help-text hidden" aria-hidden="true"></div>
           <div id="keypad" class="keypad" aria-label="Ziffernfeld">
             <button type="button" data-digit="1">1</button><button type="button" data-digit="2">2</button><button type="button" data-digit="3">3</button>
             <button type="button" data-digit="4">4</button><button type="button" data-digit="5">5</button><button type="button" data-digit="6">6</button>
             <button type="button" data-digit="7">7</button><button type="button" data-digit="8">8</button><button type="button" data-digit="9">9</button>
             <button type="button" data-action="clear" class="key-clear">⌫</button><button type="button" data-digit="0">0</button><button type="button" data-action="next" class="key-enter">✓</button>
           </div>
-          <div class="task-actions"><button id="repeatButton" class="text-button hidden" type="button">Aufgabe später wiederholen</button><button id="hintButton" class="text-button" type="button">Hilfe anzeigen</button></div>
+          <div class="task-actions"><button id="repeatButton" class="text-button hidden" type="button">Aufgabe später wiederholen</button></div>
         </section>
       </div>
       <aside class="side-panel">
         <section class="panel mini-stat"><span class="stat-label">Aufgaben erledigt</span><strong id="doneCount">0</strong><span class="stat-sub">von 20 bewertet</span></section>
         <section class="panel mini-stat"><span class="stat-label">Zeit</span><strong id="timer">0:00</strong><span class="stat-sub">läuft im Hintergrund weiter</span></section>
         <section class="panel mini-stat"><span class="stat-label">Richtig</span><strong id="correctCount">0</strong><span class="stat-sub">beim ersten Versuch</span></section>
-        <div class="side-tip"><span aria-hidden="true">💡</span><p>Du schaffst das! Überlege in Ruhe und nutze die Hilfe, wenn du sie brauchst.</p></div>
+        
       </aside>
     </section>
 

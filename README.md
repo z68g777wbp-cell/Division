@@ -13,7 +13,9 @@ Die ZIP-Datei selbst ist kein direkt ausführbarer GitHub-Pages-Inhalt. Bitte di
 ## Funktionen
 - Vier Stufen zur Division mit Rest.
 - Ziffernfeld für alle Eingaben; automatische Kontrolle nach 250 ms.
-- Punktebilder und Teilen-/Messen-Modus in Level 1 und 2.
+- Punktebilder mit 10er-Zeilen und 5er-Gliederung.
+- Level 1: Punkte können vom Kind zu Kegeln gezogen werden; beim Messen färbt das Kind Punkte mit neun Farbpinseln.
+- Level 2: Teilen-/Messen-Animationen werden automatisch dargestellt.
 - Sprachunterstützung über die Browser-Sprachausgabe, falls verfügbar.
 - 20 bewertete Aufgaben pro Runde; eine Runde kann über die offene Tür beendet werden.
 - Erfassung von Gesamtdauer, Dauer pro Aufgabe, Erstversuchsergebnis, Hilfeverwendung und Rechenaufgabe.
@@ -28,3 +30,7 @@ Aktuell gibt es **keine echte Anmeldung und keine serverseitige Lehrpersonenübe
 - Die Zeit läuft ab Spielstart und wird bei einer vorzeitigen Beendigung ebenfalls erfasst.
 - Der Browser muss JavaScript aktiviert haben.
 - Die Sprachausgabe hängt von Betriebssystem, Browser und verfügbaren Stimmen ab.
+
+
+## Anpassung nach Bildvorlage
+In der Spielansicht werden keine schriftlichen Erklärungen oder Hilfetexte eingeblendet; Hinweise erfolgen über Sprachausgabe. Die Zuordnung in Level 1 erfolgt manuell durch das Kind. Bitte vor dem Unterrichtseinsatz auf den verwendeten Geräten praktisch testen.

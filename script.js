@@ -66,13 +66,13 @@
         dividend = divisor * quotient + remainder;
       }
     } else {
-      divisor = randomInt(level === 2 ? 5 : 5, 9);
-      quotient = randomInt(1, Math.min(9, Math.floor(30 / divisor)));
-      remainder = randomInt(0, Math.min(divisor - 1, 30 - divisor * quotient));
+      divisor = randomInt(5, 9);
+      quotient = randomInt(1, 9);
+      remainder = randomInt(0, divisor - 1);
       dividend = divisor * quotient + remainder;
-      while (dividend < 10 || dividend > 30) {
-        divisor = randomInt(5, 9); quotient = randomInt(1, Math.min(9, Math.floor(30 / divisor)));
-        remainder = randomInt(0, Math.min(divisor - 1, 30 - divisor * quotient));
+      while (dividend < 10 || dividend > 99) {
+        divisor = randomInt(5, 9); quotient = randomInt(1, 9);
+        remainder = randomInt(0, divisor - 1);
         dividend = divisor * quotient + remainder;
       }
     }
@@ -144,13 +144,13 @@
     els.progressBar.style.width = `${state.assessed / 20 * 100}%`;
     renderDots(task);
     if (state.level === 1) {
-      els.instruction.textContent = "Wähle: Teilen oder Messen.";
+      els.instruction.textContent = "";
       els.answerInput.disabled = true;
     } else if (state.level === 2) {
-      els.instruction.textContent = "Wähle Teilen oder Messen und löse die Aufgabe.";
+      els.instruction.textContent = "";
       els.answerInput.disabled = true;
     } else if (state.level === 3) {
-      els.instruction.textContent = "Suche das nächstkleinere Malergebnis in der Reihe!";
+      els.instruction.textContent = "";
       safeSpeech(`Suche das nächstkleinere Malergebnis in der ${task.divisor}er-Reihe.`);
       els.answerInput.disabled = true;
       state.hintTimer = setTimeout(() => {
@@ -161,7 +161,7 @@
         }
       }, 5000);
     } else {
-      els.instruction.textContent = "Suche das nächstkleinere Malergebnis in der Reihe!";
+      els.instruction.textContent = "";
       safeSpeech(`Suche das nächstkleinere Malergebnis in der ${task.divisor}er-Reihe.`);
       els.answerInput.disabled = true;
       els.level4ProductInput.disabled = false;
@@ -170,17 +170,26 @@
   }
 
   function renderDots(task) {
-    els.dotsArea.innerHTML = "";
-    els.dotsArea.className = "dots-area";
-    for (let i = 0; i < task.dividend; i++) {
-      const dot = document.createElement("span");
-      dot.className = "dot";
-      dot.dataset.index = String(i);
-      dot.setAttribute("aria-label", `Punkt ${i + 1}`);
-      if ((i + 1) % 10 === 0) dot.style.marginRight = "12px";
-      if (i === 49) dot.style.marginLeft = "12px";
+    els.dotsArea.innerHTML = ""; els.dotsArea.className = "dots-area";
+    for (let i=0;i<task.dividend;i++) {
+      const dot=document.createElement("button"); dot.type="button"; dot.className="dot"; dot.dataset.index=String(i);
+      dot.setAttribute("aria-label",`Punkt ${i+1}`); dot.draggable=state.level===1;
+      dot.addEventListener("dragstart",e=>{if(state.level!==1||state.mode!=="share"){e.preventDefault();return;}e.dataTransfer.setData("text/plain",dot.dataset.index);});
+      dot.addEventListener("click",()=>{if(state.level===1&&state.mode==="measure"&&state.paintColor){dot.style.backgroundColor=state.paintColor;dot.style.borderColor="#17344a";dot.dataset.painted=state.paintColor;}});
       els.dotsArea.appendChild(dot);
     }
+    if(state.level===1){
+      const cones=document.createElement("div");cones.className="cone-zone";cones.setAttribute("aria-label","Kegel");
+      for(let i=0;i<task.divisor;i++){const cone=document.createElement("button");cone.type="button";cone.className="cone-drop";cone.textContent="♟";
+        cone.addEventListener("dragover",e=>e.preventDefault());cone.addEventListener("drop",e=>{e.preventDefault();const idx=e.dataTransfer.getData("text/plain");const dot=els.dotsArea.querySelector(`.dot[data-index="${idx}"]`);if(dot){cone.appendChild(dot);dot.classList.add("placed-dot");}});cones.appendChild(cone);}
+      els.dotsArea.appendChild(cones);
+    }
+    if(state.level===1&&state.mode==="measure")showPaintPalette();
+  }
+  function showPaintPalette(){
+    let palette=document.getElementById("paintPalette");if(!palette){palette=document.createElement("div");palette.id="paintPalette";palette.className="paint-palette";els.dotsArea.parentNode.insertBefore(palette,els.dotsArea.nextSibling);}
+    palette.innerHTML="";const colors=["#ed7437","#a02b96","#fff000","#42cf61","#67c9ed","#e92727","#0ca95b","#8b65cf","#f3a5bd"];
+    colors.forEach((color,i)=>{const b=document.createElement("button");b.type="button";b.className="paint-brush";b.style.backgroundColor=color;b.setAttribute("aria-label",`Pinsel ${i+1}`);b.addEventListener("click",()=>{state.paintColor=color;palette.querySelectorAll(".paint-brush").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");});palette.appendChild(b);});
   }
 
   function chooseMode(mode) {
@@ -189,13 +198,18 @@
     els.modeButtons.classList.add("hidden");
     els.answerInput.disabled = false;
     els.answerInput.classList.add("blink");
-    els.instruction.textContent = mode === "share" ? "Teile die Punkte gleichmäßig auf." : `Tippe immer ${state.task.divisor} Punkte an!`;
+    els.instruction.textContent = "";
     safeSpeech(mode === "share" ? "Teile die Punkte gleichmäßig auf." : `Tippe immer ${state.task.divisor} Punkte an!`);
-    if (mode === "share") animateShare();
-    else animateMeasure();
+    if (state.level === 1) {
+      renderDots(state.task);
+      if (mode === "share") safeSpeech("Teile die Punkte gleichmäßig auf.");
+      else { showPaintPalette(); safeSpeech(`Tippe immer ${state.task.divisor} Punkte an!`); }
+    } else {
+      if (mode === "share") animateShare(); else animateMeasure();
+    }
     state.inputTarget = "answer";
     els.restInput.classList.remove("hidden"); els.restLabel.classList.remove("hidden");
-    if (mode === "measure") els.dotsArea.classList.add("measure-mode");
+    if (mode === "measure" && state.level !== 1) els.dotsArea.classList.add("measure-mode");
   }
 
   function animateShare() {
@@ -210,8 +224,7 @@
         dot.classList.add(COLORS[group], "circled");
       }
     });
-    els.helpText.textContent = `Jede Gruppe bekommt ${task.divisor} Punkte. ${task.remainder ? `${task.remainder} Punkt(e) bleiben übrig.` : "Es bleibt kein Punkt übrig."}`;
-    els.helpText.classList.remove("hidden");
+    els.helpText.textContent = ""; els.helpText.classList.add("hidden");
   }
 
   function animateMeasure() {
@@ -221,8 +234,7 @@
       if (index < task.quotient * task.divisor) dot.classList.add(COLORS[Math.floor(index / task.divisor) % COLORS.length], "circled");
       else dot.classList.add("leftover");
     });
-    els.helpText.textContent = `Zähle immer ${task.divisor} Punkte zu einem Päckchen zusammen.`;
-    els.helpText.classList.remove("hidden");
+    els.helpText.textContent = ""; els.helpText.classList.add("hidden");
   }
 
   function setInputValue(input, digit) {
@@ -250,7 +262,7 @@
       if (input === els.productInput) {
         if (value === task.product) {
           markCorrect(input); state.stage = "findQuotient"; els.answerInput.disabled = false;
-          els.instruction.textContent = `Wie viel mal ${task.divisor} ist ${task.product}?`;
+          els.instruction.textContent = "";
           safeSpeech(`Wie viel mal ${task.divisor} ist ${task.product}?`);
           state.inputTarget = "answer";
         } else markWrong(input, value < task.product ? "Noch zu klein. Suche das nächstkleinere Malergebnis." : "Das ist zu groß. Suche das nächstkleinere Malergebnis.");
@@ -259,7 +271,7 @@
       if (input === els.answerInput && state.stage === "findQuotient") {
         if (value === task.quotient) {
           markCorrect(input); els.dividendText.textContent = task.dividend;
-          els.instruction.textContent = `${task.dividend} : ${task.divisor} = ${task.quotient}, weil ${task.quotient} · ${task.divisor} = ${task.product}.`;
+          els.instruction.textContent = "";
           safeSpeech(`${task.dividend} geteilt durch ${task.divisor} ist ${task.quotient}, weil ${task.quotient} mal ${task.divisor} gleich ${task.product} ist.`);
           animateModeAfterProduct();
           els.restInput.classList.remove("hidden"); els.restLabel.classList.remove("hidden");
@@ -273,7 +285,7 @@
         if (value === task.product) {
           markCorrect(input); state.stage = "findQuotient";
           els.level4QuotientGhost.textContent = "?"; els.answerInput.disabled = false;
-          els.instruction.textContent = `Wie viel mal ${task.divisor} = ${task.product}?`;
+          els.instruction.textContent = "";
           safeSpeech(`Wie viel mal ${task.divisor} ist ${task.product}?`);
           state.inputTarget = "answer";
         } else {
@@ -287,7 +299,7 @@
           markCorrect(input); els.level4QuotientGhost.textContent = String(task.quotient);
           state.stage = "findRemainder"; state.inputTarget = "rest";
           els.restInput.classList.remove("hidden"); els.restLabel.classList.remove("hidden"); els.restInput.disabled = false;
-          els.instruction.textContent = `Wie viel fehlt von ${task.product} auf ${task.dividend}?`;
+          els.instruction.textContent = "";
           safeSpeech(`Wie viel fehlt von ${task.product} auf ${task.dividend}?`);
         } else markWrong(input, "Versuche es noch einmal.");
         return;
@@ -298,7 +310,7 @@
         markCorrect(input);
         state.stage = "findRemainder"; state.inputTarget = "rest";
         els.restInput.disabled = false; els.restInput.classList.remove("hidden"); els.restLabel.classList.remove("hidden");
-        els.instruction.textContent = "Wie viele Punkte bleiben übrig? Trage den Rest ein.";
+        els.instruction.textContent = "";
         safeSpeech("Wie viele Punkte bleiben übrig? Trage den Rest ein.");
         return;
       }
@@ -315,7 +327,7 @@
 
   function markCorrect(input) {
     input.classList.remove("incorrect", "blink"); input.classList.add("correct");
-    els.feedback.textContent = "Richtig!"; els.feedback.className = "feedback good";
+    els.feedback.textContent = ""; els.feedback.className = "feedback good";
     if (state.level <= 2 && input === els.answerInput) {
       // The first correct quotient is not the end: remainder is a separate part of the same task.
       return;
@@ -327,7 +339,7 @@
   }
   function markWrong(input, message) {
     input.classList.remove("correct"); input.classList.add("incorrect");
-    els.feedback.textContent = message; els.feedback.className = "feedback bad";
+    els.feedback.textContent = ""; els.feedback.className = "feedback bad";
     if (state.firstTry && !state.task.assessed) {
       state.task.attempts += 1;
       state.firstTry = false;
@@ -425,7 +437,7 @@
     const t = state.task;
     let text = `Denke an die Malreihe von ${t.divisor}: ${t.divisor}, ${2*t.divisor}, ${3*t.divisor} … Das größte passende Ergebnis ist ${t.product}.`;
     if (state.level <= 2) text = `Lege oder zähle immer ${t.divisor} Punkte in einer Gruppe. ${t.quotient} Gruppen ergeben ${t.product} Punkte. ${t.remainder} Punkt(e) bleiben übrig.`;
-    els.helpText.textContent = text; els.helpText.classList.remove("hidden");
+    els.helpText.textContent = ""; els.helpText.classList.add("hidden");
     safeSpeech(text);
   }
 
@@ -538,7 +550,7 @@
         input === els.productInput || input === els.level4ProductInput ? t.product : t.quotient;
       if (value === expected) {
         input.classList.remove("incorrect"); input.classList.add("correct");
-        els.feedback.textContent = "Gut verbessert!"; els.feedback.className = "feedback good";
+        els.feedback.textContent = ""; els.feedback.className = "feedback good";
         if (input === els.answerInput && (state.level <= 2 || state.stage === "findQuotient")) {
           state.inputTarget = "rest"; state.stage = "findRemainder";
           els.restInput.classList.remove("hidden"); els.restLabel.classList.remove("hidden");
@@ -552,7 +564,7 @@
         }
       } else {
         input.classList.remove("correct"); input.classList.add("incorrect"); input.value = "";
-        els.feedback.textContent = "Versuche es mit der Hilfe noch einmal."; els.feedback.className = "feedback bad";
+        els.feedback.textContent = ""; els.feedback.className = "feedback bad";
       }
       return;
     }
