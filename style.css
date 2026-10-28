@@ -95,3 +95,7 @@ button{font:inherit;touch-action:manipulation;cursor:pointer}
 #game.level-4 .product-row input{margin:0}
 #game.level-4 .equation{gap:clamp(5px,1.2vw,14px)}
 #game.level-4 #remainder:disabled{background:#e7ecef}
+
+/* V8: Punktfeld mit stabilen, gleichmäßigen Grid-Abständen ohne überlaufende Margins. */
+#dots{column-gap:clamp(4px,.8vw,10px)!important;row-gap:clamp(4px,.8vw,10px)!important}
+#dots>.dot:nth-child(10n+6), #dots>.dot:nth-child(51){margin-left:0!important;margin-top:0!important}

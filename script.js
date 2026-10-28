@@ -5,7 +5,7 @@ const ui = {
   game:$("game"), result:$("result"), levels:[...document.querySelectorAll(".level")],
   dividend:$("dividend"), divisor:$("divisor"), quotient:$("quotient"), remainder:$("remainder"),
   restLabel:$("restLabel"), dots:$("dots"), modeButtons:$("modeButtons"), share:$("share"), measure:$("measure"),
-  palette:$("palette"), keypad:$("keypad"), productRow:$("productRow"), zLabel:$("zLabel"), yLabel:$("yLabel"), product:$("product"),
+  palette:$("palette"), keypad:$("keypad"), productRow:$("productRow"), zLabel:$("zLabel"), yLabel:$("yLabel"), product:$("product"), factor:$("factor"),
   leave:$("leave"), score:$("score"), time:$("time"), celebration:$("celebration"), export:$("export"), again:$("again")
 };
 const COLORS=["#ed7437","#a02b96","#fff000","#42cf61","#67c9ed","#e92727","#0ca95b","#8b65cf","#f3a5bd"];
@@ -47,10 +47,10 @@ function showTask(task){
  state.stage=state.level<=2?"chooseMode":"findProduct";state.target=state.level>=3?"product":"quotient";
  ui.dividend.textContent=task.dividend;ui.divisor.textContent=task.divisor;
  ui.quotient.value="";ui.remainder.value="";ui.product.value="";
- [ui.quotient,ui.remainder,ui.product].forEach(i=>i.classList.remove("correct","incorrect","blink"));
+ [ui.quotient,ui.remainder,ui.product,ui.factor].forEach(i=>{if(i)i.classList.remove("correct","incorrect","blink")}); if(ui.factor){ui.factor.value="";ui.factor.disabled=true;ui.factor.classList.add("disabled-look")}
  ui.remainder.classList.add("hidden");ui.restLabel.classList.add("hidden");
- if(state.level===4){ui.quotient.disabled=true;ui.remainder.disabled=true;ui.remainder.classList.remove("hidden");ui.restLabel.classList.remove("hidden");ui.quotient.classList.add("disabled-look");ui.remainder.classList.add("disabled-look");ui.product.disabled=false;ui.product.classList.remove("disabled-look");}
- else {ui.quotient.disabled=state.level===3;ui.remainder.disabled=false;ui.quotient.classList.toggle("disabled-look",state.level===3);ui.remainder.classList.remove("disabled-look");ui.product.disabled=false;ui.product.classList.remove("disabled-look");}
+ if(state.level===4){ui.quotient.disabled=true;ui.remainder.disabled=true;ui.remainder.classList.remove("hidden");ui.restLabel.classList.remove("hidden");ui.quotient.classList.add("disabled-look");ui.remainder.classList.add("disabled-look");ui.product.disabled=false;ui.product.classList.remove("disabled-look"); if(ui.factor){ui.factor.disabled=true;ui.factor.classList.add("disabled-look");}}
+ else {ui.quotient.disabled=state.level===3;ui.remainder.disabled=false;ui.quotient.classList.toggle("disabled-look",state.level===3);ui.remainder.classList.remove("disabled-look");ui.product.disabled=false;ui.product.classList.remove("disabled-look"); if(ui.factor){ui.factor.disabled=true;ui.factor.classList.add("disabled-look");}}
  ui.productRow.classList.toggle("hidden",state.level!==3&&state.level!==4);
  ui.zLabel.textContent="z";ui.yLabel.textContent=task.divisor;
  ui.modeButtons.classList.toggle("hidden",state.level>2);
@@ -150,7 +150,7 @@ function validateManualWork(){
  }
  return true;
 }
-function inputForTarget(){return state.target==="product"?ui.product:state.target==="remainder"?ui.remainder:ui.quotient}
+function inputForTarget(){return state.target==="product"?ui.product:state.target==="factor"?ui.factor:state.target==="remainder"?ui.remainder:ui.quotient}
 function requiredLength(target){return target==="product"?String(state.task.product).length:1}
 function distributionComplete(){
  if(state.level!==1||state.mode!=="share"||!state.task)return true;
@@ -190,7 +190,7 @@ function checkInput(input){
  if(state.finished||!state.task||!input.value)return;
  const t=state.task,v=Number(input.value),target=state.target;
  if(target==="quotient"&&state.level===1&&!validateManualWork()){input.value="";return;}
- let expected=target==="product"?t.product:target==="remainder"?t.remainder:t.quotient;
+ let expected=target==="product"?t.product:target==="factor"?t.quotient:target==="remainder"?t.remainder:t.quotient;
  if(v!==expected){
   let msg="Versuche es noch einmal.";
   if(state.level===4&&target==="product")msg=v>t.product?"Zu groß":(v%t.divisor!==0?"Nicht in dieser Reihe":"Zu klein");
@@ -198,16 +198,23 @@ function checkInput(input){
   wrong(input,msg);return;
  }
  right(input);
+ if(target==="factor"){
+  ui.quotient.value=String(t.quotient);ui.quotient.classList.add("correct");
+  state.stage="findRemainder";state.target="remainder";
+  speak(`Wie viel fehlt von ${t.product} bis ${t.dividend}?`);
+  ui.remainder.classList.remove("hidden");ui.restLabel.classList.remove("hidden");ui.remainder.disabled=false;ui.remainder.classList.remove("disabled-look");
+  return;
+ }
  if(target==="product"){
   stopTimers();
   if(state.level===4){ui.quotient.disabled=false;ui.quotient.classList.remove("disabled-look");}
-  if(state.level===3){state.stage="findQuotient";state.target="quotient";ui.quotient.disabled=false;ui.quotient.classList.remove("disabled-look","blink");speak(`Wie viel fehlt von ${t.product} bis ${t.dividend}?`)}
-  else {state.stage="findQuotient";state.target="quotient";speak(state.level===4?`Wie oft passt die ${t.divisor} in die ${t.dividend}?`:`Wie viel mal ${t.divisor} ist ${t.product}?`)}
+  if(state.level===3){state.stage="findFactor";state.target="factor";ui.factor.disabled=false;ui.factor.classList.remove("disabled-look");ui.factor.classList.add("blink");speak(`Wie viel mal ${t.divisor} ist ${t.product}?`)}
+  else {state.stage="findQuotient";state.target="quotient";speak(state.level===4?`Wie viel mal ${t.divisor} ist ${t.product}?`:`Wie viel mal ${t.divisor} ist ${t.product}?`)}
   return;
  }
  if(target==="quotient"){
   ui.quotient.value=String(t.quotient);
-  if(state.level===3){speak(`${t.dividend} geteilt durch ${t.divisor} ist ${t.quotient}, weil ${t.quotient} mal ${t.divisor} gleich ${t.product} ist.`);animateGroups(t.mode||"share")}
+  if(state.level===3){speak(`${t.dividend} geteilt durch ${t.divisor} ist ${t.quotient}.`);animateGroups(t.mode||"share")}
   if(state.level===4){speak(`Wie viel fehlt von ${t.product} auf ${t.dividend}?`)}
   else if(state.level<=2)speak("Wie viele Punkte bleiben übrig?");
   ui.remainder.classList.remove("hidden");ui.restLabel.classList.remove("hidden");ui.remainder.disabled=false;ui.remainder.classList.remove("disabled-look");state.target="remainder";state.stage="findRemainder";return;
