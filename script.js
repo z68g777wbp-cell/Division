@@ -106,12 +106,12 @@
     state.assessed = 0; state.correct = 0; state.wrong = 0; state.records = [];
     state.finished = false; state.retryQueue = []; state.mode = null; state.stage = "active";
     buildQueue();
-    els.startScreen.classList.add("hidden");
+    if (els.startScreen) els.startScreen.classList.add("hidden");
     els.resultScreen.classList.add("hidden");
     els.gameScreen.classList.remove("hidden");
-    els.levelLabel.textContent = `LEVEL ${state.level}`;
-    els.doneCount.textContent = "0"; els.correctCount.textContent = "0";
-    updateTimer(); state.timerHandle = setInterval(updateTimer, 250);
+    if (els.levelLabel) els.levelLabel.textContent = "";
+    if (els.doneCount) els.doneCount.textContent = ""; if (els.correctCount) els.correctCount.textContent = "";
+    if (els.timer) { updateTimer(); state.timerHandle = setInterval(updateTimer, 250); }
     showTask(state.queue[0]);
   }
   function updateTimer() { els.timer.textContent = formatTime(elapsedSeconds()); }
@@ -171,6 +171,7 @@
 
   function renderDots(task) {
     els.dotsArea.innerHTML = ""; els.dotsArea.className = "dots-area";
+    const oldPalette=document.getElementById("paintPalette"); if(oldPalette) oldPalette.remove();
     for (let i=0;i<task.dividend;i++) {
       const dot=document.createElement("button"); dot.type="button"; dot.className="dot"; dot.dataset.index=String(i);
       dot.setAttribute("aria-label",`Punkt ${i+1}`); dot.draggable=state.level===1;
@@ -500,12 +501,12 @@
       document.querySelectorAll(".level-choice").forEach((b) => b.classList.remove("selected"));
       button.classList.add("selected");
     }));
-    els.startButton.addEventListener("click", startGame);
+    if (els.startButton) els.startButton.addEventListener("click", startGame);
     els.leaveButton.addEventListener("click", leaveGame);
     els.shareButton.addEventListener("click", () => chooseMode("share"));
     els.measureButton.addEventListener("click", () => chooseMode("measure"));
-    els.hintButton.addEventListener("click", showHelp);
-    els.repeatButton.addEventListener("click", () => {
+    if (els.hintButton) els.hintButton.addEventListener("click", showHelp);
+    if (els.repeatButton) els.repeatButton.addEventListener("click", () => {
       if (state.task && state.task.assessed) {
         state.retryQueue.push(state.task);
         nextTask();
@@ -533,7 +534,7 @@
       if (!dot || !els.dotsArea.classList.contains("measure-mode")) return;
       dot.classList.toggle("circled");
     });
-    els.downloadButton.addEventListener("click", downloadResult);
+    if (els.downloadButton) els.downloadButton.addEventListener("click", downloadResult);
     els.againButton.addEventListener("click", () => {
       els.resultScreen.classList.add("hidden"); els.startScreen.classList.remove("hidden");
       state.startedAt = 0; state.finished = false;

@@ -9,19 +9,11 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand-mark" aria-hidden="true">÷</div>
-    <div>
-      <h1>Teilen mit Rest</h1>
-      <p class="subtitle">Entdecken · ausprobieren · verstehen</p>
-    </div>
-    <button id="leaveButton" class="icon-button" type="button" aria-label="🚪" title="🚪">🚪</button>
-  </header>
-
   <main id="app" class="app-shell">
     
 
-    <section id="gameScreen" class="game-layout" aria-live="off">\n      <div class="level-picker game-level-picker" role="group" aria-label="Levels"><button class="level-choice selected" data-level="1" type="button"><strong>1</strong></button><button class="level-choice " data-level="2" type="button"><strong>2</strong></button><button class="level-choice " data-level="3" type="button"><strong>3</strong></button><button class="level-choice " data-level="4" type="button"><strong>4</strong></button></div>
+    <section id="gameScreen" class="game-layout" aria-live="off">
+      <div class="level-picker game-level-picker" role="group" aria-label="Levels"><button class="level-choice selected" data-level="1" type="button"><strong>1</strong></button><button class="level-choice " data-level="2" type="button"><strong>2</strong></button><button class="level-choice " data-level="3" type="button"><strong>3</strong></button><button class="level-choice " data-level="4" type="button"><strong>4</strong></button></div>
       <div class="game-main">
         <div class="progress-row">
           <div><span class="eyebrow" id="levelLabel">LEVEL 1</span><span id="taskCounter" class="task-counter">Aufgabe 1 von 20</span></div>
@@ -51,8 +43,8 @@
             </div>
           </div>
           <div id="modeButtons" class="mode-buttons hidden">
-            <button id="shareButton" class="secondary-button" type="button"><span class="cone-icon" aria-hidden="true">▲ ▲ ▲</span></button>
-            <button id="measureButton" class="secondary-button" type="button"><span class="ring-icon" aria-hidden="true">◯</span></button>
+            <button id="shareButton" class="mode-button" type="button" aria-label="Teilen"><svg viewBox="0 0 100 80" aria-hidden="true"><path d="M50 6 L36 30 H64 Z M22 28 L8 54 H36 Z M78 28 L64 54 H92 Z" fill="currentColor"/><path d="M50 30 V72 M22 54 V72 M78 54 V72" stroke="currentColor" stroke-width="5"/><path d="M32 72 H68 M4 72 H40 M60 72 H96" stroke="currentColor" stroke-width="5"/></svg></button>
+            <button id="measureButton" class="mode-button" type="button" aria-label="Messen"><svg viewBox="0 0 100 80" aria-hidden="true"><ellipse cx="50" cy="40" rx="35" ry="25" fill="none" stroke="currentColor" stroke-width="8"/><ellipse cx="50" cy="40" rx="25" ry="16" fill="none" stroke="currentColor" stroke-width="4"/></svg></button>
           </div>
           <div id="feedback" class="feedback" aria-hidden="true"></div>
           <div id="helpText" class="help-text hidden" aria-hidden="true"></div>

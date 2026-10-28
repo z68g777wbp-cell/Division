@@ -30,3 +30,42 @@
 .cone-drop .dot{width:18px;height:18px;flex:0 0 18px}
 .paint-palette{margin:20px auto 8px}
 @media(max-width:560px){.dots-area{grid-template-columns:repeat(10,17px);gap:7px 4px}.dot{width:17px;height:17px;flex-basis:17px}.dot:nth-child(10n+6){margin-left:7px!important}.cone-zone{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:20px;min-height:100px;padding:8px 6px 16px}.cone-drop{min-height:75px;padding:4px}.cone-drop .dot{width:12px;height:12px;flex-basis:12px}.game-level-picker .level-choice{min-width:48px}}
+
+/* Full-screen, text-free interface */
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{padding:0;background:#fff}
+.topbar{display:none!important}
+.app-shell{width:100vw;height:100dvh;max-width:none;margin:0;padding:0;overflow:hidden}
+.game-layout{display:flex!important;flex-direction:column;width:100%;height:100%;gap:0;padding:0;margin:0}
+.game-level-picker{order:0;flex:0 0 auto;width:100%;height:clamp(48px,8vh,72px);box-sizing:border-box;margin:0;padding:4px 8px;display:flex;justify-content:center;align-items:center;gap:clamp(8px,2vw,24px);background:#fff}
+.game-level-picker .level-choice{border:0!important;box-shadow:none!important;background:transparent!important;min-width:clamp(44px,6vw,72px);padding:0;margin:0}
+.game-level-picker .level-choice strong{width:clamp(34px,5vh,48px);height:clamp(34px,5vh,48px);display:flex;align-items:center;justify-content:center;border:2px solid #17344a;border-radius:50%;background:#f4f7fb;color:#17344a;font-size:clamp(18px,3vh,26px)}
+.game-level-picker .level-choice.selected strong{background:#176483;color:#fff;border-color:#17344a}
+.game-main{order:1;display:flex;flex:1;min-height:0;width:100%;height:calc(100% - clamp(48px,8vh,72px));margin:0;padding:0}
+.progress-row{display:none!important}
+.task-panel{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;height:100%;box-sizing:border-box;margin:0;padding:clamp(6px,1.5vh,18px) clamp(6px,1.5vw,18px);border:0!important;border-radius:0!important;box-shadow:none!important;background:#fff;overflow:hidden}
+.equation-row{flex:0 0 auto;justify-content:center;margin:0 auto clamp(4px,1vh,12px);gap:clamp(8px,2vw,22px)}
+.work-area{display:flex;flex:1;min-height:0;flex-direction:column;align-items:center;justify-content:center;width:100%;overflow:auto}
+.dots-area{display:grid;grid-template-columns:repeat(10,minmax(0,clamp(16px,3.3vw,38px)));gap:clamp(3px,.7vw,9px) clamp(3px,.7vw,9px);justify-content:center;align-content:center;max-width:100%;width:max-content;min-height:0;padding:clamp(4px,1vh,12px);margin:0 auto}
+.dot{display:block;width:clamp(16px,3.3vw,38px);height:clamp(16px,3.3vw,38px);min-width:0;min-height:0;padding:0;border:2px solid #17344a;border-radius:50%;background:#176483;box-sizing:border-box;touch-action:none;cursor:grab}
+.dot:nth-child(10n+6){margin-left:clamp(3px,.7vw,9px)!important}
+.cone-zone{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(5px,1vw,14px);width:100%;box-sizing:border-box;margin-top:clamp(14px,3vh,30px);padding:8px 6px 14px;min-height:clamp(100px,19vh,190px);border:0!important;border-radius:0;background:transparent}
+.cone-drop{display:flex;flex-wrap:wrap;align-content:flex-start;align-items:flex-start;justify-content:center;gap:4px;min-width:0;min-height:clamp(85px,16vh,165px);padding:6px 3px;border:0!important;border-bottom:1px solid #dbe3e8!important;border-radius:0!important;background:transparent!important;color:#111;font-size:clamp(28px,5vh,48px)}
+.cone-drop .dot{width:clamp(13px,2vw,23px);height:clamp(13px,2vw,23px);flex:0 0 clamp(13px,2vw,23px)}
+.mode-buttons{display:flex;justify-content:center;align-items:center;gap:clamp(16px,4vw,40px);margin:clamp(5px,1vh,12px) auto}
+.mode-button{display:flex;align-items:center;justify-content:center;width:clamp(64px,10vh,96px);height:clamp(50px,8vh,76px);border:2px solid #17344a;border-radius:12px;background:#f5f8fa;color:#17344a;padding:8px}
+.mode-button svg{width:100%;height:100%}
+.keypad{flex:0 0 auto;margin:clamp(4px,1vh,10px) auto 0}
+.instruction,.feedback,.help-text,.side-panel,.task-actions,.footer{display:none!important}
+#paintPalette{flex:0 0 auto}
+@media(max-width:560px){
+ .game-level-picker{height:52px}
+ .game-main{height:calc(100% - 52px)}
+ .task-panel{padding:4px}
+ .equation-row{gap:8px;margin-bottom:4px}
+ .dots-area{grid-template-columns:repeat(10,minmax(0,clamp(16px,7vw,26px)));gap:4px}
+ .dot{width:clamp(16px,7vw,26px);height:clamp(16px,7vw,26px)}
+ .cone-zone{min-height:90px;margin-top:12px;gap:4px;padding:4px 2px 8px}
+ .cone-drop{min-height:75px;font-size:24px;padding:3px 1px}
+ .cone-drop .dot{width:12px;height:12px;flex-basis:12px}
+}
