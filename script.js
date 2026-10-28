@@ -35,7 +35,7 @@ function buildQueue(){state.roundSeen=new Set();state.queue=[];while(state.queue
 function stopTimers(){if(state.inputTimer)clearTimeout(state.inputTimer);if(state.hintTimer)clearTimeout(state.hintTimer);state.inputTimer=state.hintTimer=null}
 function startGame(){
  stopTimers();if(state.timerHandle)clearInterval(state.timerHandle);
- state.level=Number(document.querySelector(".level.selected")?.dataset.level||1);
+ state.level=Number(document.querySelector(".level.selected")?.dataset.level||1);ui.game.classList.remove("level-1","level-2","level-3","level-4");ui.game.classList.add(`level-${state.level}`);
  state.sessionId=uid();state.startedAt=Date.now();state.assessed=0;state.correct=0;state.wrong=0;state.records=[];state.finished=false;state.mode=null;state.stage="chooseMode";state.target="quotient";state.lastResult=null;
  buildQueue();ui.result.classList.add("hidden");ui.game.classList.remove("hidden");
  ui.levels.forEach(b=>b.classList.toggle("selected",Number(b.dataset.level)===state.level));
@@ -57,7 +57,7 @@ function showTask(task){
  ui.share.disabled=false;ui.measure.disabled=false;
  ui.palette.classList.add("hidden");ui.palette.innerHTML="";ui.dots.classList.remove("measure-mode");
  renderDots(task,false);
- if(state.level===3){speak(`Suche das nächstkleinere Malergebnis in der ${task.divisor}er-Reihe.`);state.hintTimer=setTimeout(()=>{if(state.task===task&&state.stage==="findProduct"){ui.product.value=String(task.product);ui.product.classList.add("correct");setTimeout(()=>{if(state.task===task&&state.stage==="findProduct"){ui.product.value="";ui.product.classList.remove("correct")}},1000)}},5000)}
+ if(state.level===3){speak(`Suche das nächstkleinere Malergebnis in der ${task.divisor}er-Reihe.`);state.hintTimer=setTimeout(()=>{if(state.task===task&&state.stage==="findProduct"){const dots=[...ui.dots.querySelectorAll(".dot")];dots.slice(0,task.product).forEach(d=>d.style.backgroundColor="#42cf61");setTimeout(()=>{if(state.task===task&&state.stage==="findProduct")dots.forEach(d=>d.style.backgroundColor="")},1000)}},5000)}
  if(state.level===4)speak(`Suche das nächstkleinere Malergebnis in der ${task.divisor}er-Reihe.`);
 }
 function renderDots(task,cones){
@@ -89,13 +89,50 @@ function chooseMode(mode){
   if(mode==="share")speak("Teile die Punkte gleichmäßig auf.");
   else {setupPalette();ui.dots.classList.add("measure-mode");speak(`Tippe immer ${state.task.divisor} Punkte an!`)}
  }else{
-  animateGroups(mode);speak(mode==="share"?"Teile die Punkte gleichmäßig auf.":`Tippe immer ${state.task.divisor} Punkte an!`);
+  animateGroups(mode);
+  if(state.level===2){
+   speak(mode==="measure"?`Tippe immer ${state.task.divisor} Punkte an!`:"");
+   animateLevelTwo(mode);
+  } else speak(mode==="share"?"Teile die Punkte gleichmäßig auf.":`Tippe immer ${state.task.divisor} Punkte an!`);
  }
  state.target="quotient";
 }
 function animateGroups(mode){
  const t=state.task,dots=[...ui.dots.querySelectorAll(".dot")];
  dots.forEach((dot,i)=>{if(i<t.quotient*t.divisor){dot.style.backgroundColor=COLORS[Math.floor(i/t.divisor)%COLORS.length];dot.classList.add("grouped")}else{dot.style.backgroundColor="#fff";dot.classList.add("leftover")}});
+}
+function animateLevelTwo(mode){
+ const t=state.task,dots=[...ui.dots.querySelectorAll(".dot")];
+ dots.forEach(dot=>{dot.style.backgroundColor="#fff";dot.classList.remove("grouped","leftover")});
+ dots.forEach((dot,i)=>{setTimeout(()=>{if(state.task!==t)return;
+  if(i<t.quotient*t.divisor){dot.style.backgroundColor=COLORS[Math.floor(i/t.divisor)%COLORS.length];dot.classList.add("grouped")}
+  else {dot.style.backgroundColor="#fff";dot.classList.add("leftover")}
+ },i*95)});
+}
+function validateManualWork(){
+ const t=state.task;
+ if(state.level!==1||!t)return true;
+ if(state.mode==="share"){
+  const cones=[...ui.dots.querySelectorAll(".cone-drop")];
+  if(cones.length!==t.divisor)return false;
+  const counts=cones.map(c=>c.querySelectorAll(".dot").length);
+  if(counts.some(n=>n!==t.quotient)){speak("Alle gleich viel - zähl nach!");return false}
+  const leftovers=ui.dots.querySelectorAll(":scope > .dot").length;
+  if(leftovers!==t.remainder){speak("Alle gleich viel - zähl nach!");return false}
+  return true;
+ }
+ if(state.mode==="measure"){
+  const colors=[...new Set([...ui.dots.querySelectorAll(".dot")].map(d=>d.dataset.painted).filter(Boolean))];
+  let valid=true;
+  for(const color of colors){
+   const painted=[...ui.dots.querySelectorAll(".dot")].filter(d=>d.dataset.painted===color);
+   if(painted.length!==t.divisor){painted.forEach(d=>{d.style.backgroundColor="#fff";delete d.dataset.painted});valid=false}
+  }
+  const white=[...ui.dots.querySelectorAll(".dot")].filter(d=>!d.dataset.painted).length;
+  if(white!==t.remainder){speak(`Immer ${t.divisor} - zähl nach!`);valid=false}
+  return valid;
+ }
+ return true;
 }
 function inputForTarget(){return state.target==="product"?ui.product:state.target==="remainder"?ui.remainder:ui.quotient}
 function requiredLength(target){return target==="product"?String(state.task.product).length:1}
@@ -105,7 +142,8 @@ function distributionComplete(){
  return cones.length===state.task.divisor&&cones.every(cone=>cone.querySelectorAll(".dot").length===state.task.quotient);
 }
 function enterDigit(digit){
- if(state.finished||state.stage==="chooseMode"||!distributionComplete())return;
+ if(state.finished||state.stage==="chooseMode")return;
+ if(!validateManualWork())return;
  const input=inputForTarget();if(!input||input.disabled)return;
  const needed=requiredLength(state.target);
  if(input.value.length>=needed)input.value="";
@@ -145,7 +183,7 @@ function checkInput(input){
  if(target==="product"){
   stopTimers();
   if(state.level===4){ui.quotient.disabled=false;ui.quotient.classList.remove("disabled-look");}
-  if(state.level===3){state.stage="findQuotient";state.target="quotient";ui.quotient.classList.remove("blink");speak(`Wie viel mal ${t.divisor} ist ${t.product}?`)}
+  if(state.level===3){state.stage="findQuotient";state.target="quotient";ui.quotient.disabled=false;ui.quotient.classList.remove("disabled-look","blink");speak(`Wie viel fehlt von ${t.product} bis ${t.dividend}?`)}
   else {state.stage="findQuotient";state.target="quotient";speak(`Wie viel mal ${t.divisor} ist ${t.product}?`)}
   return;
  }

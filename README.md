@@ -19,3 +19,11 @@ Für die spätere Anmeldung und Lehrpersonenübersicht kann die umgebende Lernpl
 
 ## Prüfungen
 Die Dateien sind ohne externe Laufzeitbibliotheken umgesetzt. Die Spielabläufe wurden mit automatisierten Browser-Smoke- und Integrationstests geprüft; Details sind im Übergabebericht im Chat angeführt.
+
+
+## Aktualisierung (28.10.2026)
+- Punktabstände mit Fünfergliederung angepasst.
+- Punkte unter Kegeln werden in einer senkrechten Spalte gesammelt.
+- Manuelle Verteilung und Farbmessung werden beim Start der Ergebniseingabe kontrolliert.
+- Level 2 zeigt die automatische Gruppenfärbung schrittweise.
+- Level-spezifische Darstellung der Aufgabenfelder ergänzt.

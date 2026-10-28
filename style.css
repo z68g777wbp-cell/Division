@@ -75,3 +75,16 @@ button{font:inherit;touch-action:manipulation;cursor:pointer}
 .cone-drop{width:100%;min-height:clamp(80px,15vh,135px);display:flex;flex-wrap:wrap;align-content:flex-start;justify-content:center;align-items:flex-start;gap:4px;padding:5px 2px;border:0;border-bottom:2px solid #dbe4e8;background:transparent}
 .cone-drop .dot{width:clamp(12px,2vw,22px);height:clamp(12px,2vw,22px);flex:0 0 clamp(12px,2vw,22px)}
 @media(max-width:560px){.cone-column>svg{width:clamp(17px,4vw,25px);height:clamp(17px,4vw,25px)}.cone-drop{min-height:65px}.cone-drop .dot{width:12px;height:12px;flex-basis:12px}}
+
+/* Gleichmäßige Punktabstände; nach fünf Spalten und fünf Zeilen vierfacher Abstand. */
+#dots{column-gap:clamp(3px,.7vw,9px);row-gap:clamp(3px,.7vw,9px)}
+#dots>.dot:nth-child(10n+6){margin-left:calc(clamp(3px,.7vw,9px) * 3)}
+#dots>.dot:nth-child(n+51){margin-top:calc(clamp(3px,.7vw,9px) * 3)}
+/* Punkte unter den Kegeln werden in genau einer senkrechten Spalte abgelegt. */
+.cone-drop{display:flex;flex-direction:column;flex-wrap:nowrap;align-content:flex-start;align-items:center;justify-content:flex-start;gap:clamp(3px,.7vw,9px);overflow:visible}
+.cone-drop .dot:nth-child(5n+6){margin-top:calc(clamp(3px,.7vw,9px) * 3)}
+.cone-column{min-width:0}
+.cone-zone{grid-template-columns:repeat(var(--cone-count,5),minmax(0,1fr))}
+#game.level-4 .product-row .operator,#game.level-4 #zLabel,#game.level-4 #yLabel{display:none}
+#game.level-4 .product-row{justify-content:center}
+#game.level-4 .product-row input{margin-left:0}
